@@ -71,6 +71,51 @@ pwsh scripts\publish.ps1 -SkipBuild       # ビルド済みの APK をそのま�
 
 署名の鍵が違う APK には上書きできません。別の PC でビルドしたものなど、鍵の違う版が端末に入っている場合は、いったんアンインストールしてから入れてください。
 
+## GitHub Actions から配布する（CD）
+
+`main` に push すると、`.github/workflows/wake-update-cd.yml` がテスト → release ビルド → Google Drive の `builds/wake-update/` への配置まで行います。
+置くのは PC の `publish.ps1` と同じ 3 つ（APK・`meta.json`・`icon.png`）なので、あとは端末の nox-apk-manager で「全て更新」を押すだけです。
+
+- Drive にある版より versionCode が大きいときだけ置きます。配布するときは `build.gradle.kts` の `versionCode` と `versionName` を上げて push してください
+- 同じ版を置き直したいときは、GitHub の Actions →「wake-update CD」→「Run workflow」で「同じ versionCode の版が Drive にあっても置き直す」にチェックします
+- 過去の版の APK は消さずに残します（manager から古い版も入れ直せます）
+
+### 最初に 1 回だけ: Secrets を登録する
+
+GitHub のリポジトリの Settings → Secrets and variables → Actions → New repository secret で、次の 2 つを登録します。
+
+**1. `DEBUG_KEYSTORE_BASE64`**: PC の debug 鍵。ほかの自作アプリと同じ鍵で署名するために使います。PowerShell で次を実行すると、クリップボードに入ります。
+
+```powershell
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("$env:USERPROFILE\.android\debug.keystore")) | Set-Clipboard
+```
+
+**2. `RCLONE_DRIVE_TOKEN`**: あなたの Google アカウントとして Drive に書き込むためのトークン。
+
+```powershell
+winget install Rclone.Rclone
+rclone authorize "drive"
+```
+
+ブラウザが開くので、`builds/` のある Google アカウントで許可します。
+ターミナルの `Paste the following into your remote machine --->` と `<---End paste` の間に出る `{"access_token":...}` の 1 行を、そのまま貼り付けます。
+
+任意で、Variables に次も登録できます。
+
+| 名前 | 内容 |
+| --- | --- |
+| `SIGNING_CERT_SHA256` | 署名鍵の SHA-256（`keytool -list -v -keystore "$env:USERPROFILE\.android\debug.keystore" -storepass android` の SHA256）。登録すると、違う鍵で署名した APK を置く前に止まります |
+| `NOX_DRIVE_BUILDS` | rclone から見た `builds/` の場所。既定は `gdrive:builds`（マイドライブ直下） |
+
+### なぜサービスアカウントではないのか
+
+nox-apk-manager が Drive を読むのに使っているサービスアカウントは、マイドライブにファイルを作れません（サービスアカウントは容量を持たないので、アップロードが 403 になります）。
+そのため、書き込みはあなたの Google アカウントとして行います。
+
+- rclone の既定のアプリを使います。テスト中の自作 OAuth アプリのように、トークンが 7 日で切れることはありません。ただし 6 か月使わないと失効するので、そのときは `rclone authorize "drive"` をやり直してください
+- 既にある `builds/` フォルダに書き込むため、トークンは Drive 全体を読み書きできます。Secrets 以外には置かないでください。漏れた場合は、Google アカウントの「セキュリティ」→「サードパーティ製のアプリとサービス」から rclone のアクセスを削除すれば無効になります
+- ワークフローは `main` への push と手動実行でしか動きません（プルリクエストでは Secrets を使いません）
+
 ## 開発
 
 ```sh
