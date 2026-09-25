@@ -17,8 +17,9 @@ android {
         applicationId = "io.github.noxitro.modukit.wakeupdate"
         minSdk = 29
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0.0"
+        // nox-apk-manager は versionCode で更新を判定する。変更を配布するときは両方上げる
+        versionCode = 2
+        versionName = "1.0.1"
     }
 
     buildTypes {
@@ -26,6 +27,9 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            // 自作アプリはほかと同じく debug 鍵で署名し、nox-apk-manager から入れる。
+            // debug と release が同じ鍵なので、manager で variant を切り替えても上書きできる
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 

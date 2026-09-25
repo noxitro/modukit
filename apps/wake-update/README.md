@@ -48,24 +48,34 @@ Galaxy Store などから入れたアプリは Play ストアで更新されな�
 - 起動したことで、アプリがディープスリープの一覧から外れる例が報告されています。このアプリは画面オフのあとに確認して知らせるので、その場合は「ディープスリープの一覧を開く」から追加し直してください
 - リマインダーを確実に届けるには、設定の「このアプリをスリープさせない」から、このアプリを「自動的にスリープ状態にしないアプリ」に追加してください
 
-## インストール
+## インストール（nox-apk-manager）
 
-APK をスマホに入れて開き、「提供元不明のアプリ」の許可を求められたら許可してください。
+PC でリポジトリのルートから次を実行すると、release 版をビルドして Google Drive の `builds/wake-update/` に置きます。
+中身は APK（`wake-update-<versionName>-release.apk`）、`meta.json`、一覧用の `icon.png` です。
 
-自分でビルドする場合（JDK 17 以上と Android SDK 37 が必要）:
-
-```sh
-./gradlew :apps:wake-update:assembleDebug
-adb install apps/wake-update/build/outputs/apk/debug/wake-update-debug.apk
+```powershell
+pwsh scripts\publish.ps1                  # release を置く
+pwsh scripts\publish.ps1 -Variant both    # debug も置く
+pwsh scripts\publish.ps1 -SkipBuild       # ビルド済みの APK をそのまま置く
 ```
 
-署名の鍵が違う APK には上書きできないので、別の環境でビルドしたものに入れ替えるときは、いったんアンインストールしてください。
+端末の nox-apk-manager を開くと「おこして更新」が出るので、「導入」をタップします。2 回目以降は「全て更新」に含まれます。
+
+- APK のコピーと `meta.json` の更新は nox-apk-manager の `scripts/publish-apk.ps1` に任せています。既定では modukit と同じ親フォルダの `nox-apk-manager` を使います。別の場所にあるときは `-ManagerDir` か環境変数 `NOX_APK_MANAGER` で指定してください
+- 配布ルートは `publish-apk.ps1` と同じく環境変数 `NOX_BUILDS_ROOT` で変えられます（既定は `G:\マイドライブ\builds`）
+- ほかの自作アプリと同じく、release も debug 鍵で署名します。manager で debug と release を切り替えても上書きできます
+- nox-apk-manager は versionCode で更新を判定します。変更を配布するときは `build.gradle.kts` の `versionCode` と `versionName` を上げてください
+- 一覧に出る名前は APK の既定のアプリ名です。そのため文字列の既定（`values/`）を日本語にしています
+- 説明文は `distribution/description.txt`、アイコンは `distribution/icon.png` です
+- 初めてビルドするときは Android SDK Platform 37 が必要です。SDK のライセンスに同意済みなら Gradle が自動で入れます
+
+署名の鍵が違う APK には上書きできません。別の PC でビルドしたものなど、鍵の違う版が端末に入っている場合は、いったんアンインストールしてから入れてください。
 
 ## 開発
 
 ```sh
 ./gradlew :apps:wake-update:testDebugUnitTest          # テスト
-./gradlew :apps:wake-update:recordRoborazziDebug       # screenshots/ の画像を作り直す
+./gradlew :apps:wake-update:recordRoborazziDebug       # screenshots/ と distribution/icon.png を作り直す
 ./gradlew :apps:wake-update:lintDebug
 ```
 

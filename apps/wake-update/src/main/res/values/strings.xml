@@ -1,141 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">Wake &amp; Update</string>
+<!-- 既定は日本語。nox-apk-manager の一覧は APK の既定のアプリ名を表示する -->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="ja">
+    <string name="app_name">おこして更新</string>
 
-    <!-- Sky panel -->
-    <string name="sky_eyebrow_sleeping">Deep sleeping</string>
-    <string name="sky_caption_loading">Checking your apps</string>
-    <string name="sky_title_not_galaxy">This isn\'t a Galaxy phone</string>
-    <string name="sky_caption_not_galaxy">Deep sleep is a Galaxy feature, so there is nothing to wake on this phone.</string>
-    <string name="sky_title_none">No apps are in deep sleep</string>
-    <string name="sky_caption_none">Every app can get updates from the Play Store.</string>
-    <string name="sky_caption_sleeping">They won\'t update from the Play Store until they are opened.</string>
+    <!-- 夜空のパネル -->
+    <string name="sky_eyebrow_sleeping">ディープスリープ中</string>
+    <string name="sky_caption_loading">アプリを確認しています</string>
+    <string name="sky_title_not_galaxy">Galaxy 以外の端末です</string>
+    <string name="sky_caption_not_galaxy">ディープスリープは Galaxy の機能なので、この端末では起こすアプリはありません。</string>
+    <string name="sky_title_none">スリープ中のアプリはありません</string>
+    <string name="sky_caption_none">どのアプリも Play ストアで更新できます。</string>
+    <string name="sky_caption_sleeping">起動するまで、Play ストアで更新されません。</string>
     <plurals name="sky_unit_apps">
-        <item quantity="one">app</item>
-        <item quantity="other">apps</item>
+        <item quantity="other">個のアプリ</item>
     </plurals>
-    <string name="sky_eyebrow_waking">Waking up</string>
-    <string name="sky_title_waking">Almost awake</string>
-    <string name="sky_caption_waking">Updates will show up in the Play Store in a few seconds.</string>
-    <string name="sky_eyebrow_awake">Awake</string>
-    <string name="sky_caption_awake">You can update them in the Play Store until the screen turns off.</string>
-    <string name="sky_eyebrow_still_awake">Still awake</string>
-    <string name="sky_caption_still_awake">They stayed awake after the screen turned off.</string>
-    <string name="sky_caption_none_woke">They won\'t update from the Play Store until they are opened.</string>
+    <string name="sky_eyebrow_waking">起こしています</string>
+    <string name="sky_title_waking">まもなく起きます</string>
+    <string name="sky_caption_waking">数秒で Play ストアに更新が表示されます。</string>
+    <string name="sky_eyebrow_awake">起きています</string>
+    <string name="sky_caption_awake">画面をオフにするまで、Play ストアで更新できます。</string>
+    <string name="sky_eyebrow_still_awake">起きたままです</string>
+    <string name="sky_caption_still_awake">画面をオフにしたあとも、ディープスリープに戻っていません。</string>
+    <string name="sky_caption_none_woke">起動するまで、Play ストアで更新されません。</string>
 
-    <!-- Lists -->
-    <string name="section_wake">Apps to wake</string>
+    <!-- 一覧 -->
+    <string name="section_wake">起こすアプリ</string>
     <string name="section_selected_of">%1$d / %2$d</string>
-    <string name="action_select_all">Select all</string>
-    <string name="action_select_none">Clear</string>
-    <string name="section_other">Not from the Play Store</string>
-    <string name="section_other_body">Installed from Galaxy Store or elsewhere. The Play Store can\'t update them, so they aren\'t selected at first.</string>
-    <string name="action_show">Show</string>
-    <string name="action_hide">Hide</string>
-    <string name="app_meta_updated">Updated %1$s</string>
+    <string name="action_select_all">すべて選択</string>
+    <string name="action_select_none">選択を解除</string>
+    <string name="section_other">Play ストア以外のアプリ</string>
+    <string name="section_other_body">Galaxy Store などから入れたアプリです。Play ストアでは更新されないので、最初は選ばれていません。</string>
+    <string name="action_show">表示</string>
+    <string name="action_hide">隠す</string>
+    <string name="app_meta_updated">最終更新 %1$s</string>
     <string name="source_galaxy_store">Galaxy Store</string>
-    <string name="source_other">Other store</string>
-    <string name="section_updated">Updated</string>
-    <string name="updated">Updated</string>
-    <string name="section_next">What to do next</string>
-    <string name="step_update_title">Tap “Update all” in the Play Store</string>
-    <string name="step_update_body">If no updates appear, tap “Check for updates”.</string>
-    <string name="step_screen_off_title">Turn off the screen when it\'s done</string>
-    <string name="step_screen_off_body">The apps go back to deep sleep.</string>
+    <string name="source_other">その他のストア</string>
+    <string name="section_updated">更新されたアプリ</string>
+    <string name="updated">更新済み</string>
+    <string name="section_next">次にすること</string>
+    <string name="step_update_title">Play ストアで「すべて更新」をタップ</string>
+    <string name="step_update_body">更新が表示されないときは「アップデートを確認」をタップします。</string>
+    <string name="step_screen_off_title">更新が終わったら、画面をオフにする</string>
+    <string name="step_screen_off_body">アプリはディープスリープに戻ります。</string>
     <plurals name="names_more">
-        <item quantity="one">and %d more</item>
-        <item quantity="other">and %d more</item>
+        <item quantity="other">ほか %d 個</item>
     </plurals>
 
-    <!-- Last result -->
-    <string name="last_result_label">Last time · %1$s</string>
+    <!-- 前回の結果 -->
+    <string name="last_result_label">前回 · %1$s</string>
     <plurals name="last_result_woken">
-        <item quantity="one">Woke %d app</item>
-        <item quantity="other">Woke %d apps</item>
+        <item quantity="other">%d 個のアプリを起こしました</item>
     </plurals>
-    <string name="last_result_woken_updated">Woke %1$d · Updated %2$d</string>
+    <string name="last_result_woken_updated">%1$d 個を起こして、%2$d 個を更新しました</string>
     <plurals name="last_result_not_back">
-        <item quantity="one">%d app didn\'t go back to sleep</item>
-        <item quantity="other">%d apps didn\'t go back to sleep</item>
+        <item quantity="other">%d 個がスリープに戻りませんでした</item>
     </plurals>
 
-    <!-- Notices -->
+    <!-- お知らせ -->
     <plurals name="notice_not_woken_title">
-        <item quantity="one">Couldn\'t wake %d app</item>
-        <item quantity="other">Couldn\'t wake %d apps</item>
+        <item quantity="other">%d 個のアプリを起こせませんでした</item>
     </plurals>
-    <string name="notice_not_woken_body">If a confirmation appeared, choose “Allow”. Trying again often works.</string>
+    <string name="notice_not_woken_body">確認の画面が出た場合は「許可」を選んでください。もう一度起こすと起きることがあります。</string>
     <plurals name="notice_not_back_title">
-        <item quantity="one">%d app didn\'t go back to sleep</item>
-        <item quantity="other">%d apps didn\'t go back to sleep</item>
+        <item quantity="other">%d 個がスリープに戻っていません</item>
     </plurals>
-    <string name="notice_not_back_body">Opening them may have taken them off the deep sleep list. Open the list and add them again if you want them to sleep.</string>
-    <string name="notice_none_woke_title">Couldn\'t wake any apps</string>
-    <string name="notice_none_woke_body">If a confirmation appeared, choose “Allow” and try again. A One UI update may also have changed how apps wake up.</string>
+    <string name="notice_not_back_body">起動したことで、ディープスリープの一覧から外れた可能性があります。スリープさせたい場合は、一覧を開いて追加し直してください。</string>
+    <string name="notice_none_woke_title">アプリを起こせませんでした</string>
+    <string name="notice_none_woke_body">確認の画面が出た場合は「許可」を選んでから、もう一度試してください。One UI の更新で起こし方が変わった可能性もあります。</string>
 
-    <!-- Actions -->
+    <!-- 操作 -->
     <plurals name="action_wake">
-        <item quantity="one">Wake %d app and update</item>
-        <item quantity="other">Wake %d apps and update</item>
+        <item quantity="other">%d 個を起こして更新</item>
     </plurals>
-    <string name="action_wake_helper">Each app opens briefly, then the Play Store opens.</string>
-    <string name="action_choose_apps">Choose apps to wake</string>
-    <string name="action_open_play_store">Open the Play Store</string>
-    <string name="action_update_in_play_store">Update in the Play Store</string>
-    <string name="action_update_helper">Turn off the screen when the updates are done.</string>
-    <string name="action_wake_again">Wake again</string>
-    <string name="action_open_deep_sleep_list">Open the deep sleep list</string>
-    <string name="action_dismiss">Dismiss</string>
+    <string name="action_wake_helper">アプリが一瞬ずつ開き、Play ストアに移ります</string>
+    <string name="action_choose_apps">起こすアプリを選んでください</string>
+    <string name="action_open_play_store">Play ストアを開く</string>
+    <string name="action_update_in_play_store">Play ストアで更新する</string>
+    <string name="action_update_helper">更新が終わったら、画面をオフにしてください</string>
+    <string name="action_wake_again">もう一度起こす</string>
+    <string name="action_open_deep_sleep_list">ディープスリープの一覧を開く</string>
+    <string name="action_dismiss">閉じる</string>
 
-    <!-- Onboarding -->
-    <string name="onboarding_title">Update sleeping apps in one go</string>
-    <string name="onboarding_body">Apps in deep sleep don\'t update from the Play Store until they are opened. This app wakes them for a while so they can update, and your deep sleep settings stay as they are.</string>
-    <string name="onboarding_step1_title">Wake the apps</string>
-    <string name="onboarding_step1_body">Each app appears on screen for a moment. You don\'t need to do anything.</string>
-    <string name="onboarding_step2_title">Tap “Update all” in the Play Store</string>
-    <string name="onboarding_step2_body">While they are awake, they update like any other app.</string>
-    <string name="onboarding_step3_title">Turn off the screen</string>
-    <string name="onboarding_step3_body">The apps go back to deep sleep. If some don\'t, this app tells you.</string>
-    <string name="onboarding_start">Get started</string>
+    <!-- 使い方 -->
+    <string name="onboarding_title">スリープ中のアプリを、まとめて更新</string>
+    <string name="onboarding_body">ディープスリープ中のアプリは、起動するまで Play ストアで更新されません。このアプリがまとめて一時的に起こすので、ディープスリープの設定はそのままで更新できます。</string>
+    <string name="onboarding_step1_title">アプリをまとめて起こす</string>
+    <string name="onboarding_step1_body">アプリの画面が一瞬ずつ表示されます。操作は必要ありません。</string>
+    <string name="onboarding_step2_title">Play ストアで「すべて更新」</string>
+    <string name="onboarding_step2_body">起きている間は、ほかのアプリと同じように更新できます。</string>
+    <string name="onboarding_step3_title">画面をオフにする</string>
+    <string name="onboarding_step3_body">アプリはディープスリープに戻ります。戻らなかったときは、このアプリでお知らせします。</string>
+    <string name="onboarding_start">はじめる</string>
 
-    <!-- Settings -->
-    <string name="settings_title">Settings</string>
-    <string name="settings_reminder">Reminder</string>
-    <string name="settings_reminder_body">Get a notification when it\'s time to update your sleeping apps.</string>
-    <string name="reminder_off">Off</string>
-    <string name="reminder_weekly">Weekly</string>
-    <string name="reminder_biweekly">2 weeks</string>
-    <string name="reminder_monthly">Monthly</string>
-    <string name="settings_notifications_off">Notifications are off</string>
-    <string name="settings_allow_notifications">Allow</string>
-    <string name="settings_keep_awake">Keep this app from sleeping</string>
-    <string name="settings_keep_awake_body">So reminders arrive on time, add this app to “Never sleeping apps” with the + button.</string>
-    <string name="settings_galaxy">Galaxy settings</string>
-    <string name="settings_deep_sleep_list">Deep sleeping apps</string>
-    <string name="settings_deep_sleep_list_body">Review and edit the list in Galaxy\'s battery settings.</string>
-    <string name="settings_about">About</string>
-    <string name="settings_how_to">How it works</string>
-    <string name="settings_how_to_body">How apps are woken and go back to sleep</string>
-    <string name="settings_version">Version %1$s</string>
+    <!-- 設定 -->
+    <string name="settings_title">設定</string>
+    <string name="settings_reminder">リマインダー</string>
+    <string name="settings_reminder_body">スリープ中のアプリを更新するタイミングを、通知でお知らせします。</string>
+    <string name="reminder_off">オフ</string>
+    <string name="reminder_weekly">毎週</string>
+    <string name="reminder_biweekly">2 週間</string>
+    <string name="reminder_monthly">毎月</string>
+    <string name="settings_notifications_off">通知がオフになっています</string>
+    <string name="settings_allow_notifications">許可する</string>
+    <string name="settings_keep_awake">このアプリをスリープさせない</string>
+    <string name="settings_keep_awake_body">リマインダーが確実に届くよう、「自動的にスリープ状態にしないアプリ」に「＋」から追加してください。</string>
+    <string name="settings_galaxy">Galaxy の設定</string>
+    <string name="settings_deep_sleep_list">ディープスリープ中のアプリ</string>
+    <string name="settings_deep_sleep_list_body">Galaxy のバッテリー設定で、一覧を確認・編集します。</string>
+    <string name="settings_about">このアプリについて</string>
+    <string name="settings_how_to">使い方</string>
+    <string name="settings_how_to_body">起こし方と、スリープに戻る仕組み</string>
+    <string name="settings_version">バージョン %1$s</string>
 
-    <!-- Reminder notification -->
-    <string name="reminder_channel_name">Reminders</string>
-    <string name="reminder_channel_description">Reminds you to update apps in deep sleep</string>
-    <string name="reminder_title">Time to update your sleeping apps</string>
+    <!-- リマインダーの通知 -->
+    <string name="reminder_channel_name">リマインダー</string>
+    <string name="reminder_channel_description">スリープ中のアプリの更新をお知らせします</string>
+    <string name="reminder_title">スリープ中のアプリを更新しましょう</string>
     <plurals name="reminder_text">
-        <item quantity="one">%d app is in deep sleep and isn\'t getting Play Store updates.</item>
-        <item quantity="other">%d apps are in deep sleep and aren\'t getting Play Store updates.</item>
+        <item quantity="other">%d 個のアプリがディープスリープ中で、Play ストアで更新されていません。</item>
     </plurals>
-    <string name="reminder_action">Wake and update</string>
+    <string name="reminder_action">起こして更新</string>
 
-    <!-- Quick settings tile and shortcut -->
-    <string name="tile_label">Wake &amp; Update</string>
+    <!-- クイック設定のタイルとショートカット -->
+    <string name="tile_label">おこして更新</string>
     <plurals name="tile_subtitle_sleeping">
-        <item quantity="one">%d sleeping</item>
-        <item quantity="other">%d sleeping</item>
+        <item quantity="other">%d 個がスリープ中</item>
     </plurals>
-    <string name="tile_subtitle_none">None sleeping</string>
-    <string name="toast_nothing_to_wake">No apps to wake</string>
-    <string name="shortcut_wake_short">Wake and update</string>
-    <string name="shortcut_wake_long">Wake sleeping apps and update</string>
+    <string name="tile_subtitle_none">スリープ中のアプリなし</string>
+    <string name="toast_nothing_to_wake">起こすアプリはありません</string>
+    <string name="shortcut_wake_short">起こして更新</string>
+    <string name="shortcut_wake_long">スリープ中のアプリを起こして更新</string>
 </resources>
