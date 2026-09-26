@@ -75,6 +75,7 @@ pwsh scripts\publish.ps1 -SkipBuild       # ビルド済みの APK をそのま�
 
 `main` に push すると、`.github/workflows/wake-update-cd.yml` がテスト → release ビルド → Google Drive の `builds/wake-update/` への配置まで行います。
 置くのは PC の `publish.ps1` と同じ 3 つ（APK・`meta.json`・`icon.png`）なので、あとは端末の nox-apk-manager で「全て更新」を押すだけです。
+中身は、ほかのリポジトリからも使える共通のワークフロー（[publish-apk](../../.github/actions/publish-apk/)）です。
 
 - Drive にある版より versionCode が大きいときだけ置きます。配布するときは `build.gradle.kts` の `versionCode` と `versionName` を上げて push してください
 - 同じ版を置き直したいときは、GitHub の Actions →「wake-update CD」→「Run workflow」で「同じ versionCode の版が Drive にあっても置き直す」にチェックします
@@ -82,39 +83,18 @@ pwsh scripts\publish.ps1 -SkipBuild       # ビルド済みの APK をそのま�
 
 ### 最初に 1 回だけ: Secrets を登録する
 
-GitHub のリポジトリの Settings → Secrets and variables → Actions → New repository secret で、次の 2 つを登録します。
-
-**1. `DEBUG_KEYSTORE_BASE64`**: PC の debug 鍵。ほかの自作アプリと同じ鍵で署名するために使います。PowerShell で次を実行すると、クリップボードに入ります。
+PC で modukit のフォルダから次を実行します。ブラウザが開くので、`builds/` のある Google アカウントで rclone を許可します。
 
 ```powershell
-[Convert]::ToBase64String([IO.File]::ReadAllBytes("$env:USERPROFILE\.android\debug.keystore")) | Set-Clipboard
+winget install GitHub.cli     # 初回だけ。そのあと gh auth login
+winget install Rclone.Rclone  # 初回だけ
+pwsh scripts\set-ci-secrets.ps1 -Repo modukit
 ```
 
-**2. `RCLONE_DRIVE_TOKEN`**: あなたの Google アカウントとして Drive に書き込むためのトークン。
+リポジトリの Secrets に、debug 鍵（`DEBUG_KEYSTORE_BASE64`）と Drive に書き込むトークン（`RCLONE_DRIVE_TOKEN`）が入ります。
+手で登録する方法、トークンの期限と扱いは [publish-apk の README](../../.github/actions/publish-apk/README.md) にあります。
 
-```powershell
-winget install Rclone.Rclone
-rclone authorize "drive"
-```
-
-ブラウザが開くので、`builds/` のある Google アカウントで許可します。
-ターミナルの `Paste the following into your remote machine --->` と `<---End paste` の間に出る `{"access_token":...}` の 1 行を、そのまま貼り付けます。
-
-任意で、Variables に次も登録できます。
-
-| 名前 | 内容 |
-| --- | --- |
-| `SIGNING_CERT_SHA256` | 署名鍵の SHA-256（`keytool -list -v -keystore "$env:USERPROFILE\.android\debug.keystore" -storepass android` の SHA256）。登録すると、違う鍵で署名した APK を置く前に止まります |
-| `NOX_DRIVE_BUILDS` | rclone から見た `builds/` の場所。既定は `gdrive:builds`（マイドライブ直下） |
-
-### なぜサービスアカウントではないのか
-
-nox-apk-manager が Drive を読むのに使っているサービスアカウントは、マイドライブにファイルを作れません（サービスアカウントは容量を持たないので、アップロードが 403 になります）。
-そのため、書き込みはあなたの Google アカウントとして行います。
-
-- rclone の既定のアプリを使います。テスト中の自作 OAuth アプリのように、トークンが 7 日で切れることはありません。ただし 6 か月使わないと失効するので、そのときは `rclone authorize "drive"` をやり直してください
-- 既にある `builds/` フォルダに書き込むため、トークンは Drive 全体を読み書きできます。Secrets 以外には置かないでください。漏れた場合は、Google アカウントの「セキュリティ」→「サードパーティ製のアプリとサービス」から rclone のアクセスを削除すれば無効になります
-- ワークフローは `main` への push と手動実行でしか動きません（プルリクエストでは Secrets を使いません）
+任意で、Variables に `SIGNING_CERT_SHA256`（署名鍵の SHA-256。`keytool -list -v -keystore "$env:USERPROFILE\.android\debug.keystore" -storepass android` の SHA256）を登録すると、違う鍵で署名した APK を置く前に止まります。
 
 ## 開発
 
