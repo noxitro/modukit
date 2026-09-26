@@ -71,6 +71,31 @@ pwsh scripts\publish.ps1 -SkipBuild       # ビルド済みの APK をそのま�
 
 署名の鍵が違う APK には上書きできません。別の PC でビルドしたものなど、鍵の違う版が端末に入っている場合は、いったんアンインストールしてから入れてください。
 
+## GitHub Actions から配布する（CD）
+
+`main` に push すると、`.github/workflows/wake-update-cd.yml` がテスト → release ビルド → Google Drive の `builds/wake-update/` への配置まで行います。
+置くのは PC の `publish.ps1` と同じ 3 つ（APK・`meta.json`・`icon.png`）なので、あとは端末の nox-apk-manager で「全て更新」を押すだけです。
+中身は nox-apk-manager にある共通のワークフロー（[docs/CD.md](https://github.com/noxitro/nox-apk-manager/blob/main/docs/CD.md)）で、ほかのリポジトリからも同じように使えます。
+
+- Drive にある版より versionCode が大きいときだけ置きます。配布するときは `build.gradle.kts` の `versionCode` と `versionName` を上げて push してください
+- 同じ版を置き直したいときは、GitHub の Actions →「wake-update CD」→「Run workflow」で「同じ versionCode の版が Drive にあっても置き直す」にチェックします
+- 過去の版の APK は消さずに残します（manager から古い版も入れ直せます）
+
+### 最初に 1 回だけ: Secrets を登録する
+
+PC で nox-apk-manager のフォルダから次を実行します。ブラウザが開くので、`builds/` のある Google アカウントで rclone を許可します。
+
+```powershell
+winget install GitHub.cli     # 初回だけ。そのあと gh auth login
+winget install Rclone.Rclone  # 初回だけ
+pwsh scripts\set-ci-secrets.ps1 -Repo modukit
+```
+
+リポジトリの Secrets に、debug 鍵（`DEBUG_KEYSTORE_BASE64`）と Drive に書き込むトークン（`RCLONE_DRIVE_TOKEN`）が入ります。
+手で登録する方法、トークンの期限と扱いは nox-apk-manager の [docs/CD.md](https://github.com/noxitro/nox-apk-manager/blob/main/docs/CD.md) にあります。
+
+任意で、Variables に `SIGNING_CERT_SHA256`（署名鍵の SHA-256。`keytool -list -v -keystore "$env:USERPROFILE\.android\debug.keystore" -storepass android` の SHA256）を登録すると、違う鍵で署名した APK を置く前に止まります。
+
 ## 開発
 
 ```sh

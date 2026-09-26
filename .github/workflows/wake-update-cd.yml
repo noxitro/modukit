@@ -1,0 +1,38 @@
+# おこして更新を Google Drive の builds/wake-update/ に置き、nox-apk-manager から入れられるようにする。
+# 中身は nox-apk-manager の共通ワークフロー（docs/CD.md）。Secrets の登録は apps/wake-update/README.md。
+name: wake-update CD
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/wake-update/**"
+      - "gradle/**"
+      - "*.gradle.kts"
+      - "gradle.properties"
+      - ".github/workflows/wake-update-cd.yml"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "同じ versionCode の版が Drive にあっても置き直す"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    uses: noxitro/nox-apk-manager/.github/workflows/publish-apk.yml@main
+    with:
+      project: wake-update
+      gradle-tasks: ":apps:wake-update:testDebugUnitTest :apps:wake-update:assembleRelease"
+      apk: apps/wake-update/build/outputs/apk/release/wake-update-release.apk
+      description-file: apps/wake-update/distribution/description.txt
+      icon: apps/wake-update/distribution/icon.png
+      sdk-packages: "platforms;android-37.2 build-tools;37.0.0"
+      signing-cert-sha256: ${{ vars.SIGNING_CERT_SHA256 }}
+      force: ${{ inputs.force == true }}
+    secrets:
+      DEBUG_KEYSTORE_BASE64: ${{ secrets.DEBUG_KEYSTORE_BASE64 }}
+      RCLONE_DRIVE_TOKEN: ${{ secrets.RCLONE_DRIVE_TOKEN }}

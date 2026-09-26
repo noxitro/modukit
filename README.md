@@ -8,7 +8,8 @@ android用モジュール式ユーティリティ
 | [おこして更新](apps/wake-update/) | Galaxy のディープスリープ中のアプリを一時的に起こして、Play ストアで更新できるようにする |
 
 アプリは [nox-apk-manager](https://github.com/noxitro/nox-apk-manager) で配布します。
-`pwsh scripts\publish.ps1 -App <アプリ名>` で、ビルドして Google Drive の `builds/<アプリ名>/` に置きます。
+`main` に push すると GitHub Actions が Google Drive の `builds/<アプリ名>/` に置きます（nox-apk-manager の共通ワークフロー。Secrets の登録は各アプリの README）。
+PC から置くときは `pwsh scripts\publish.ps1 -App <アプリ名>` です。
 
 ## ツール
 
