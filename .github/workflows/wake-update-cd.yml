@@ -1,5 +1,5 @@
 # おこして更新を Google Drive の builds/wake-update/ に置き、nox-apk-manager から入れられるようにする。
-# 中身は publish-apk.yml（ほかのリポジトリと共通）。Secrets の登録は apps/wake-update/README.md。
+# 中身は nox-apk-manager の共通ワークフロー（docs/CD.md）。Secrets の登録は apps/wake-update/README.md。
 name: wake-update CD
 
 on:
@@ -11,8 +11,6 @@ on:
       - "*.gradle.kts"
       - "gradle.properties"
       - ".github/workflows/wake-update-cd.yml"
-      - ".github/workflows/publish-apk.yml"
-      - ".github/actions/publish-apk/**"
   workflow_dispatch:
     inputs:
       force:
@@ -25,7 +23,7 @@ permissions:
 
 jobs:
   publish:
-    uses: ./.github/workflows/publish-apk.yml
+    uses: noxitro/nox-apk-manager/.github/workflows/publish-apk.yml@main
     with:
       project: wake-update
       gradle-tasks: ":apps:wake-update:testDebugUnitTest :apps:wake-update:assembleRelease"
