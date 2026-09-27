@@ -107,6 +107,26 @@ pwsh scripts\set-ci-secrets.ps1 -Repo modukit
 - `domain/`: 起こす対象の選び方（`Selection`）と、起こしたあとの判定（`SessionEvaluator`）。Android に依存しない
 - `wake/`: アプリを起こす処理（`WakeActivity`, `WakeLauncher`）とクイック設定のタイル
 - `ui/`: Jetpack Compose の画面。`screenshots/` は `ScreenshotTest` で描いた画像
+- `sleeper/`: エミュレータのテストで起こして更新するアプリ。配布しない
+
+### エミュレータのテスト
+
+`src/androidTest` の `SleepCycleTest` は、「起こす → Play ストアで更新する → 画面オフでスリープに戻る」の 1 周をエミュレータで確かめます。
+ディープスリープは Galaxy の機能なので、Galaxy がすることは `pm disable-user`（スリープ）・`pm enable`（起こす）・`pm install -r`（更新）で再現しています。
+更新したあとスリープに戻れば「更新されたアプリ」に出ること、戻らなければ「スリープに戻っていません」になることを確かめます。
+起こすアプリは、テスト用の `sleeper/`（同じパッケージの v1 と v2）です。
+
+GitHub Actions では、push のたびに `.github/workflows/wake-update-ci.yml` が単体テストと、API 29・36 のエミュレータでこのテストを動かします。
+手元で動かすときは、エミュレータか端末をつないで次を実行します。
+
+```sh
+./gradlew :apps:wake-update:sleeper:assembleV1Debug :apps:wake-update:sleeper:assembleV2Debug
+adb push apps/wake-update/sleeper/build/outputs/apk/v1/debug/sleeper-v1-debug.apk /data/local/tmp/sleeper-v1.apk
+adb push apps/wake-update/sleeper/build/outputs/apk/v2/debug/sleeper-v2-debug.apk /data/local/tmp/sleeper-v2.apk
+./gradlew :apps:wake-update:connectedDebugAndroidTest
+```
+
+Galaxy の実際の挙動（起動で一時的に起きるか、更新でディープスリープの一覧から外れないか）は、エミュレータでは確かめられません。実機で確かめてください。
 
 ### デザイン
 

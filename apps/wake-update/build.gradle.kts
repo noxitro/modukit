@@ -20,6 +20,8 @@ android {
         // nox-apk-manager は versionCode で更新を判定する。変更を配布するときは両方上げる
         versionCode = 2
         versionName = "1.0.1"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -75,4 +77,10 @@ dependencies {
     testImplementation(platform(libs.compose.bom))
     testImplementation(libs.compose.ui.test.junit4)
     debugImplementation(libs.compose.ui.test.manifest)
+
+    // エミュレータで動かすテスト（src/androidTest）。起こすアプリは :apps:wake-update:sleeper
+    androidTestImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.core)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.runner)
 }

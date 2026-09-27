@@ -17,3 +17,4 @@ dependencyResolutionManagement {
 rootProject.name = "modukit"
 
 include(":apps:wake-update")
+include(":apps:wake-update:sleeper")
