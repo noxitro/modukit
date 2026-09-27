@@ -1,6 +1,7 @@
 package io.github.noxitro.modukit.wakeupdate
 
 import android.os.ParcelFileDescriptor
+import android.os.PowerManager
 import android.os.SystemClock
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -35,12 +36,14 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class SleepCycleTest {
     private val app = ApplicationProvider.getApplicationContext<WakeUpdateApp>()
+    private val power = app.getSystemService(PowerManager::class.java)
     private lateinit var viewModel: HomeViewModel
 
     @Before
     fun setUp() {
-        shell("input keyevent KEYCODE_WAKEUP")
-        shell("wm dismiss-keyguard")
+        // エミュレータの起動からテストまでの間に画面が消えていることがあるので、点くまで待つ
+        shell("settings put system screen_off_timeout 1800000")
+        screenOn()
         shell("pm uninstall $SLEEPER")
         assertInstalled(shell("pm install $SLEEPER_V1"))
         shell("pm disable-user --user 0 $SLEEPER")
@@ -51,7 +54,7 @@ class SleepCycleTest {
 
     @After
     fun tearDown() {
-        shell("input keyevent KEYCODE_WAKEUP")
+        screenOn()
         shell("pm uninstall $SLEEPER")
     }
 
@@ -112,9 +115,16 @@ class SleepCycleTest {
         shell("pm enable $SLEEPER")
     }
 
+    private fun screenOn() {
+        shell("input keyevent KEYCODE_WAKEUP")
+        waitUntil("画面が点く") { power.isInteractive }
+        shell("wm dismiss-keyguard")
+    }
+
     private fun screenOff() {
         val lastWakeAt = app.prefs.current.session!!.lastWakeAt
         shell("input keyevent KEYCODE_SLEEP")
+        waitUntil("画面が消える") { !power.isInteractive }
         waitUntil("画面オフが記録される") { (app.prefs.current.screenOffAt ?: 0L) > lastWakeAt }
     }
 
