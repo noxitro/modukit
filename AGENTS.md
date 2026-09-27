@@ -3,6 +3,7 @@
 Claude Code・GitHub Copilot・opencode など、このリポジトリで作業する AI エージェントに共通のルールです。
 （Claude Code は `CLAUDE.md` から、Copilot は `.github/copilot-instructions.md` からこのルールを読みます）
 
+<!-- github-templates:agent-rules:start（github-templates の agent-rules/rules.md から配っている部分。ここは直接直さない） -->
 ## 言語
 
 人が読む文章は、原則として日本語で書きます。
@@ -11,13 +12,19 @@ Claude Code・GitHub Copilot・opencode など、このリポジトリで作業�
 - レビューのコメントと返信、Issue とそのコメント
 - コミットメッセージ（1 行目の要約も含む）
 - コードのコメント、README などのドキュメント
-- アプリの画面の文言（既定の `values/` は日本語）
 
 次のものは英語のままでかまいません。
 
 - クラス名・関数名・変数名などの識別子、コマンド、ファイルパス
 - ログやエラーメッセージの引用、ライブラリや製品の名前
-- 文字化けを避けるために英語にしている出力（`tools/hibernation/hibernation.sh` など）と、`values-en/` などの英語のリソース
+- 英語で書くと決めているもの（英語のリソース、文字化けを避けるために英語にしている出力など）
 - ツールが付ける定型の行（`Co-Authored-By:` などのトレーラー）
 
-文体は、README と同じく「です・ます」で、短く具体的に書きます。
+文体は、そのリポジトリの既存の文章に合わせます。
+<!-- github-templates:agent-rules:end -->
+
+## このリポジトリでの補足
+
+- アプリの画面の文言も日本語で書きます（既定の `values/` は日本語、`values-en/` は英語）
+- `tools/hibernation/hibernation.sh` の出力は、Windows のコンソールで文字化けしないように英語にしています
+- 文体は、README と同じく「です・ます」で、短く具体的に書きます
