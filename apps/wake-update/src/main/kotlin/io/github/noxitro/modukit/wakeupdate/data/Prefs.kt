@@ -60,6 +60,24 @@ class Prefs(context: Context) {
         putString(KEY_LAST_RESULT, json.encodeToString(WakeResult.serializer(), result))
     }
 
+    /**
+     * 今のセッションが startedAt の回のときだけ書き換える。
+     *
+     * アプリの状態を読むのには時間がかかり、その間に「閉じる」でセッションが消えることがある。
+     * 読む前のセッションをそのまま書き戻すと閉じたはずのカードが戻ってくるので、書く直前に確かめる。
+     */
+    @Synchronized
+    fun updateSession(startedAt: Long, transform: (WakeSession) -> WakeSession) {
+        val session = storedSession()?.takeIf { it.startedAt == startedAt } ?: return
+        setSession(transform(session))
+    }
+
+    /** [updateSession] と同じく、今のセッションが startedAt の回のときだけ終える。 */
+    @Synchronized
+    fun finishSession(startedAt: Long, result: WakeResult) {
+        if (storedSession()?.startedAt == startedAt) finishSession(result)
+    }
+
     fun setScreenOffAt(time: Long) = sp.edit { putLong(KEY_SCREEN_OFF_AT, time) }
 
     private fun read() = Snapshot(
@@ -69,10 +87,14 @@ class Prefs(context: Context) {
         ),
         onboardingDone = sp.getBoolean(KEY_ONBOARDING_DONE, false),
         reminderDays = sp.getInt(KEY_REMINDER_DAYS, 0),
-        session = sp.getString(KEY_SESSION, null)?.let { decode(it, WakeSession.serializer()) },
+        session = storedSession(),
         lastResult = sp.getString(KEY_LAST_RESULT, null)?.let { decode(it, WakeResult.serializer()) },
         screenOffAt = sp.getLong(KEY_SCREEN_OFF_AT, 0L).takeIf { it > 0L },
     )
+
+    // state は変更の通知を待って更新されるので、書く直前の確認には SharedPreferences を直接読む
+    private fun storedSession(): WakeSession? =
+        sp.getString(KEY_SESSION, null)?.let { decode(it, WakeSession.serializer()) }
 
     private fun <T> decode(text: String, serializer: kotlinx.serialization.KSerializer<T>): T? =
         runCatching { json.decodeFromString(serializer, text) }.getOrNull()

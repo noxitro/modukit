@@ -18,8 +18,8 @@ android {
         minSdk = 29
         targetSdk = 36
         // nox-apk-manager は versionCode で更新を判定する。変更を配布するときは両方上げる
-        versionCode = 2
-        versionName = "1.0.1"
+        versionCode = 3
+        versionName = "1.0.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
