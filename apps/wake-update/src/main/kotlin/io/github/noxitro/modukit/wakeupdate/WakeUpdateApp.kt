@@ -99,12 +99,12 @@ class WakeUpdateApp : Application() {
         val awake = installedApps.states(session.apps.map(SessionApp::packageName))
             .filterValues { it.enabled }
             .keys
-        prefs.setSession(
-            session.copy(
-                observedAwake = session.observedAwake + awake,
-                checkedAt = if (markChecked) System.currentTimeMillis() else session.checkedAt,
-            ),
-        )
+        prefs.updateSession(session.startedAt) {
+            it.copy(
+                observedAwake = it.observedAwake + awake,
+                checkedAt = if (markChecked) System.currentTimeMillis() else it.checkedAt,
+            )
+        }
     }
 
     private companion object {

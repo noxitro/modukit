@@ -102,10 +102,12 @@ class HomeViewModel(private val app: WakeUpdateApp) : ViewModel() {
                 snapshot.screenOffAt,
             )
             if (evaluated.phase == SessionPhase.ALL_ASLEEP) {
-                prefs.finishSession(evaluated.toResult(now))
+                prefs.finishSession(session.startedAt, evaluated.toResult(now))
             } else {
                 if (evaluated.observedAwake != session.observedAwake) {
-                    prefs.setSession(session.copy(observedAwake = evaluated.observedAwake))
+                    prefs.updateSession(session.startedAt) {
+                        it.copy(observedAwake = it.observedAwake + evaluated.observedAwake)
+                    }
                 }
                 status = evaluated
             }
