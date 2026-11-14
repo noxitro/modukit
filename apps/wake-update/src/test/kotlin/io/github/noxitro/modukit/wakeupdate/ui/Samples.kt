@@ -41,7 +41,7 @@ object Samples {
     val otherApps: List<SleepingApp> = listOf(
         app(90, "Galaxy テーマ", 70, AppSource.GALAXY_STORE),
         app(91, "Good Lock", 55, AppSource.GALAXY_STORE),
-        app(92, "社内アプリ", 300, AppSource.OTHER),
+        app(92, "業務アプリ", 300, AppSource.OTHER),
     )
 
     private val excluded = setOf("com.example.app13", "com.example.app19")
