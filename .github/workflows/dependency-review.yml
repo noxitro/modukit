@@ -31,7 +31,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-      - uses: android-actions/setup-android@v3
+      - uses: android-actions/setup-android@v4
         with:
           # wake-update-ci.yml と同じもの。依存を解決するときに Android Gradle Plugin が SDK を見る
           packages: platform-tools platforms;android-37.2 build-tools;37.0.0
