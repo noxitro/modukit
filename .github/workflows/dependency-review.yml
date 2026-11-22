@@ -1,15 +1,47 @@
 # PR で増える依存の脆弱性とライセンスの検査。本体は noxitro/github-templates の共通ワークフロー。
 # 公開リポジトリでだけ動く (依存関係グラフを使うため)。依存のマニフェストが無いリポジトリには置かなくてよい。
+#
+# GitHub の依存関係グラフは Gradle のビルドを読まないので、Gradle の依存は submit ジョブで
+# Dependency submission API に送る (gradle/actions/dependency-submission)。
+#   main への push : PR の比較元になる main の依存を送る
+#   PR             : PR の依存を送ってから、review ジョブで main と比べる
+# フォークからの PR では書き込みの権限が無いので送らない。そのときは Gradle の依存は検査されない
+# (GitHub Actions など、依存関係グラフが自分で読むものだけを見る)。
 name: Dependency review
 
 on:
+  push:
+    branches: [main]
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
+  submit:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write   # Dependency submission API に送るため
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: android-actions/setup-android@v3
+        with:
+          # wake-update-ci.yml と同じもの。依存を解決するときに Android Gradle Plugin が SDK を見る
+          packages: platform-tools platforms;android-37.2 build-tools;37.0.0
+      - uses: gradle/actions/dependency-submission@v5
+
   review:
+    needs: submit
+    # submit がフォークの PR で飛ばされたときも review は動かす。submit が失敗したときは動かさない
+    # (Gradle の依存が見えないまま通ってしまうため)
+    if: github.event_name == 'pull_request' && !cancelled() && needs.submit.result != 'failure'
     uses: noxitro/github-templates/.github/workflows/dependency-review.yml@main
     permissions:
       contents: read
