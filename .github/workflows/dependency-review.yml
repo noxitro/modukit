@@ -36,12 +36,18 @@ jobs:
           # wake-update-ci.yml と同じもの。依存を解決するときに Android Gradle Plugin が SDK を見る
           packages: platform-tools platforms;android-37.2 build-tools;37.0.0
       - uses: gradle/actions/dependency-submission@v5
+        env:
+          # アプリに入る依存 (テスト以外の *RuntimeClasspath) だけを runtime、ほか (ビルドに使う
+          # プラグインやテスト) を development として送る。共通ワークフローの review は runtime だけで
+          # 失敗させる。development の依存も Dependabot alerts には出る
+          DEPENDENCY_GRAPH_RUNTIME_INCLUDE_CONFIGURATIONS: '.*RuntimeClasspath'
+          DEPENDENCY_GRAPH_RUNTIME_EXCLUDE_CONFIGURATIONS: '.*[Tt]est.*'
 
   review:
     needs: submit
-    # submit がフォークの PR で飛ばされたときも review は動かす。submit が失敗したときは動かさない
-    # (Gradle の依存が見えないまま通ってしまうため)
-    if: github.event_name == 'pull_request' && !cancelled() && needs.submit.result != 'failure'
+    # submit がフォークの PR で飛ばされたときも review は動かす。submit が失敗・タイムアウトしたときは
+    # 動かさない (Gradle の依存が見えないまま通ってしまうため)
+    if: github.event_name == 'pull_request' && !cancelled() && contains(fromJSON('["success","skipped"]'), needs.submit.result)
     uses: noxitro/github-templates/.github/workflows/dependency-review.yml@main
     permissions:
       contents: read
