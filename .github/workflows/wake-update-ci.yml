@@ -37,7 +37,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v6
       - run: ./gradlew :apps:wake-update:testDebugUnitTest
       - if: failure()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: unit-test-reports
           path: apps/wake-update/build/reports/tests/
@@ -91,7 +91,7 @@ jobs:
             ./gradlew :apps:wake-update:connectedDebugAndroidTest
 
       - if: failure()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: emulator-test-reports-api${{ matrix.api-level }}
           path: apps/wake-update/build/reports/androidTests/
