@@ -119,13 +119,19 @@ class SleepCycleTest {
         shell("input keyevent KEYCODE_WAKEUP")
         waitUntil("画面が点く") { power.isInteractive }
         shell("wm dismiss-keyguard")
+        // SCREEN_OFF は、前の SCREEN_ON がすべての受信側に届き終わるまで送られない。
+        // 起動直後は BOOT_COMPLETED の処理で受信側が遅く、すぐ画面をオフにすると記録が 15 秒を超えて遅れるので、
+        // ブロードキャストが届き終わるのを待ってから先に進む
+        shell("am wait-for-broadcast-idle")
     }
 
     private fun screenOff() {
         val lastWakeAt = app.prefs.current.session!!.lastWakeAt
         shell("input keyevent KEYCODE_SLEEP")
         waitUntil("画面が消える") { !power.isInteractive }
-        waitUntil("画面オフが記録される") { (app.prefs.current.screenOffAt ?: 0L) > lastWakeAt }
+        waitUntil({ "画面オフが記録される（screenOffAt=${app.prefs.current.screenOffAt}、lastWakeAt=$lastWakeAt）" }) {
+            (app.prefs.current.screenOffAt ?: 0L) > lastWakeAt
+        }
     }
 
     /** 画面に戻ったときと同じく読み直して、セッションがその段階になるのを待つ。 */
@@ -152,10 +158,14 @@ class SleepCycleTest {
     private fun assertInstalled(output: String) =
         assertTrue("インストールできなかった: $output", output.contains("Success"))
 
-    private fun waitUntil(what: String, timeoutMs: Long = 15_000, condition: () -> Boolean) {
+    private fun waitUntil(what: String, timeoutMs: Long = 15_000, condition: () -> Boolean) =
+        waitUntil({ what }, timeoutMs, condition)
+
+    /** 落ちたときのメッセージに、その時点の値を入れたいとき用。 */
+    private fun waitUntil(what: () -> String, timeoutMs: Long = 15_000, condition: () -> Boolean) {
         val deadline = SystemClock.uptimeMillis() + timeoutMs
         while (!condition()) {
-            if (SystemClock.uptimeMillis() > deadline) throw AssertionError("待っても変わらなかった: $what")
+            if (SystemClock.uptimeMillis() > deadline) throw AssertionError("待っても変わらなかった: ${what()}")
             SystemClock.sleep(200)
         }
     }
